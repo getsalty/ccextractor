@@ -10,6 +10,8 @@ RUN cd && git clone https://github.com/gpac/gpac
 WORKDIR root/gpac/
 RUN ./configure && make && make install-lib  && cd && rm -rf /root/gpac
 
+RUN apk add opencl
+
 WORKDIR /root
 RUN git init
 RUN git config http.postBuffer 524288000
@@ -22,6 +24,7 @@ RUN cp /root/ccextractor/linux/ccextractor /ccextractor && rm -rf ~/ccextractor
 
 FROM base as final
 
+COPY --from=builder /usr/lib/libOpenCL.so.1 /usr/lib/
 COPY --from=builder /lib/ld-musl-x86_64.so.1 /lib/
 COPY --from=builder /usr/lib/libtesseract.so.5 /usr/lib/
 COPY --from=builder /usr/lib/libleptonica.so.6 /usr/lib/
